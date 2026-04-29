@@ -33,6 +33,7 @@ async function init() {
   try {
     await Promise.all([loadCategories(), loadTasks()]);
     renderCurrentView();
+    setupRealtime(); // リアルタイム同期を開始
   } catch (err) {
     console.error('読み込みエラー:', err);
   }
@@ -689,6 +690,31 @@ function setupEventListeners() {
 
   // 画面リサイズ時にパネル表示を更新
   window.addEventListener('resize', updatePanelVisibility);
+}
+
+// ===== リアルタイム同期 =====
+function setupRealtime() {
+  db.channel('realtime-sync')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' },
+      async () => {
+        await loadTasks();
+        renderCurrentView();
+      }
+    )
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' },
+      async () => {
+        await loadCategories();
+        renderCurrentView();
+      }
+    )
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'task_completions' },
+      async () => {
+        const { data } = await db.from('task_completions').select('*');
+        if (data) completions = data;
+        renderCurrentView();
+      }
+    )
+    .subscribe();
 }
 
 // ===== 起動 =====
