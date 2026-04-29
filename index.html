@@ -68,13 +68,9 @@
         <input type="date" id="task-date">
       </div>
       <div class="form-group">
-        <label>時間ブロック</label>
-        <select id="task-time-block">
-          <option value="9">09:00 〜 13:00</option>
-          <option value="13">13:00 〜 17:00</option>
-          <option value="17">17:00 〜 21:00</option>
-          <option value="21">21:00 〜</option>
-        </select>
+        <label>時間（任意）</label>
+        <input type="time" id="task-time" placeholder="例：10:30">
+        <p class="form-hint">入力すると自動でブロックに振り分けられます</p>
       </div>
       <div class="form-group">
         <label>繰り返し</label>

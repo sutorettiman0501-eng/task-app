@@ -132,7 +132,10 @@ function renderTaskItem(task, dateStr) {
         ${done ? '✓' : ''}
       </button>
       <div class="task-content">
-        <span class="task-title">${escapeHtml(task.title)}</span>
+        <span class="task-title">
+          ${task.task_time ? `<span class="task-time">${task.task_time.slice(0,5)}</span>` : ''}
+          ${escapeHtml(task.title)}
+        </span>
         <div class="task-badges">
           ${cat ? `<span class="task-cat">${escapeHtml(cat.name)}</span>` : ''}
           ${repeatLabel ? `<span class="task-repeat">${repeatLabel}</span>` : ''}
@@ -255,11 +258,22 @@ async function deleteTask(taskId) {
   }
 }
 
+// 時間 → ブロック自動振り分け
+function timeToBlock(timeStr) {
+  if (!timeStr) return 9;
+  const hour = parseInt(timeStr.split(':')[0]);
+  if (hour < 13) return 9;
+  if (hour < 17) return 13;
+  if (hour < 21) return 17;
+  return 21;
+}
+
 async function saveTask() {
   const title = document.getElementById('task-title').value.trim();
   const categoryId = document.getElementById('task-category').value || null;
   const date = document.getElementById('task-date').value;
-  const timeBlock = parseInt(document.getElementById('task-time-block').value);
+  const taskTime = document.getElementById('task-time').value || null;
+  const timeBlock = timeToBlock(taskTime);
   const repeat = document.getElementById('task-repeat').value;
 
   if (!title || !date) {
@@ -267,7 +281,7 @@ async function saveTask() {
     return;
   }
 
-  const payload = { title, category_id: categoryId, date, time_block: timeBlock, repeat, done: false };
+  const payload = { title, category_id: categoryId, date, time_block: timeBlock, task_time: taskTime, repeat, done: false };
 
   if (editingTaskId) {
     const { data, error } = await db.from('tasks').update(payload).eq('id', editingTaskId).select().single();
@@ -316,7 +330,7 @@ function openTaskModal(timeBlock, dateStr) {
   document.getElementById('task-title').value = '';
   document.getElementById('task-category').value = '';
   document.getElementById('task-date').value = dateStr || toDateStr(currentDate);
-  document.getElementById('task-time-block').value = timeBlock || 9;
+  document.getElementById('task-time').value = '';
   document.getElementById('task-repeat').value = 'none';
   refreshCategorySelect();
   document.getElementById('task-modal').classList.remove('hidden');

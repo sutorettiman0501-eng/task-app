@@ -443,6 +443,18 @@ nav {
   border-color: var(--accent);
 }
 
+.form-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.task-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
 .input-row {
   display: flex;
   gap: 8px;
