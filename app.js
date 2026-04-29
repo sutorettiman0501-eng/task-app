@@ -53,6 +53,9 @@ function isTaskOnDate(task, dateStr) {
   const target = new Date(dateStr);
   if (target <= base) return false;
 
+  if (task.repeat === 'daily') {
+    return true;
+  }
   if (task.repeat === 'weekly') {
     return base.getDay() === target.getDay();
   }
@@ -121,7 +124,7 @@ function renderDailyView() {
 function renderTaskItem(task, dateStr) {
   const done = isTaskDoneOnDate(task, dateStr);
   const cat = categories.find(c => c.id === task.category_id);
-  const repeatLabel = { weekly: '毎週', monthly: '毎月' }[task.repeat] || '';
+  const repeatLabel = { daily: '毎日', weekly: '毎週', monthly: '毎月' }[task.repeat] || '';
 
   return `
     <div class="task-item ${done ? 'done' : ''}">
