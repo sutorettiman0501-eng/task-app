@@ -157,6 +157,7 @@ function renderInbox() {
           <span class="task-title">${escapeHtml(task.title)}</span>
           ${cat ? `<div class="task-badges"><span class="task-cat">${escapeHtml(cat.name)}</span></div>` : ''}
         </div>
+        <button class="edit-btn" onclick="editTask('${task.id}')">編集</button>
         <button class="delete-btn" onclick="deleteTask('${task.id}')">×</button>
       `;
       list.appendChild(el);
@@ -454,6 +455,23 @@ async function deleteCategory(id) {
 }
 
 // ===== モーダル =====
+function editTask(taskId) {
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) return;
+  editingTaskId = taskId;
+  defaultTimeBlock = task.time_block || 9;
+  document.getElementById('modal-title').textContent = 'タスクを編集';
+  document.getElementById('task-title').value = task.title || '';
+  document.getElementById('task-date').value = task.date || '';
+  document.getElementById('task-time-start').value = task.task_time ? task.task_time.slice(0, 5) : '';
+  document.getElementById('task-time-end').value = task.task_time_end ? task.task_time_end.slice(0, 5) : '';
+  document.getElementById('task-repeat').value = task.repeat || 'none';
+  refreshCategorySelect();
+  document.getElementById('task-category').value = task.category_id || '';
+  updateDestinationHint();
+  document.getElementById('task-modal').classList.remove('hidden');
+}
+
 function openTaskModal(timeBlock, dateStr) {
   editingTaskId = null;
   defaultTimeBlock = timeBlock || 9;

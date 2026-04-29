@@ -393,6 +393,18 @@ nav { display: flex; }
   border: 1px solid var(--border);
 }
 
+.edit-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-sub);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 3px 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .delete-btn {
   background: none;
   border: none;
