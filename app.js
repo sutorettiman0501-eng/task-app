@@ -28,9 +28,14 @@ let inboxSortable = null;
 
 // ===== 初期化 =====
 async function init() {
-  await Promise.all([loadCategories(), loadTasks()]);
-  renderCurrentView();
+  // イベントリスナーを最初に設定（データ読み込み前でもボタンが動くように）
   setupEventListeners();
+  try {
+    await Promise.all([loadCategories(), loadTasks()]);
+    renderCurrentView();
+  } catch (err) {
+    console.error('読み込みエラー:', err);
+  }
 }
 
 // ===== データ取得 =====
@@ -162,6 +167,7 @@ function renderInbox() {
 }
 
 function setupInboxSortable() {
+  if (typeof Sortable === 'undefined') return; // SortableJS未読み込み時はスキップ
   if (inboxSortable) { inboxSortable.destroy(); inboxSortable = null; }
   const list = document.getElementById('inbox-list');
   inboxSortable = new Sortable(list, {
@@ -227,21 +233,23 @@ function renderDailyBlocks() {
 
     container.appendChild(blockEl);
 
-    // SortableJS をドロップゾーンにセット
-    const s = new Sortable(zone, {
-      group: { name: 'tasks', pull: true, put: true },
-      animation: 150,
-      ghostClass: 'sortable-ghost',
-      chosenClass: 'sortable-chosen',
-      filter: '.is-repeat', // 繰り返しタスクはドラッグ不可
-      onAdd: async (evt) => {
-        const taskId = evt.item.dataset.taskId;
-        if (taskId) await moveTaskToBlock(taskId, block.start, dateStr);
-      },
-      onStart: highlightDropZones,
-      onEnd: clearDropZones,
-    });
-    blockSortables.push(s);
+    // SortableJS をドロップゾーンにセット（読み込まれていれば）
+    if (typeof Sortable !== 'undefined') {
+      const s = new Sortable(zone, {
+        group: { name: 'tasks', pull: true, put: true },
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        filter: '.is-repeat',
+        onAdd: async (evt) => {
+          const taskId = evt.item.dataset.taskId;
+          if (taskId) await moveTaskToBlock(taskId, block.start, dateStr);
+        },
+        onStart: highlightDropZones,
+        onEnd: clearDropZones,
+      });
+      blockSortables.push(s);
+    }
   });
 }
 
