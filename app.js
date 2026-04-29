@@ -276,6 +276,7 @@ function createTaskElement(task, dateStr) {
       ${task.task_time ? `<span class="task-time-range">${task.task_time.slice(0,5)}${task.task_time_end ? ' 〜 ' + task.task_time_end.slice(0,5) : ''}</span>` : ''}
       ${badges.length ? `<div class="task-badges">${badges.join('')}</div>` : ''}
     </div>
+    <button class="edit-btn" onclick="editTask('${task.id}')">編集</button>
     <button class="delete-btn" onclick="deleteTask('${task.id}')">×</button>
   `;
   return el;
