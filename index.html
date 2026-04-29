@@ -8,24 +8,55 @@
 </head>
 <body>
 
-  <!-- ヘッダー -->
   <header>
     <h1>タスク管理</h1>
     <nav>
-      <button class="nav-btn active" data-view="daily">デイリー</button>
+      <button class="nav-btn active" data-view="gtd">ホーム</button>
       <button class="nav-btn" data-view="calendar">カレンダー</button>
       <button class="nav-btn" data-view="category">カテゴリ</button>
     </nav>
   </header>
 
-  <!-- デイリービュー -->
-  <div id="daily-view" class="view active">
-    <div class="date-nav">
-      <button id="prev-day" class="arrow-btn">&#8249;</button>
-      <span id="current-date"></span>
-      <button id="next-day" class="arrow-btn">&#8250;</button>
+  <!-- GTD ホームビュー -->
+  <div id="gtd-view" class="view active">
+
+    <!-- モバイル用切り替えボタン -->
+    <div class="panel-toggle">
+      <button class="panel-btn active" data-panel="inbox">
+        INBOX <span class="inbox-badge" id="inbox-badge">0</span>
+      </button>
+      <button class="panel-btn" data-panel="today">今日</button>
     </div>
-    <div id="time-blocks"></div>
+
+    <div class="gtd-layout">
+
+      <!-- INBOX パネル -->
+      <div class="gtd-col active" id="inbox-col">
+        <div class="col-header">
+          <span class="col-title">INBOX</span>
+          <span class="col-count" id="inbox-count">0</span>
+        </div>
+        <div class="quick-add-wrap">
+          <input type="text" id="quick-add-input" class="quick-add-input" placeholder="タスクを素早く追加（Enterで保存）">
+          <button id="quick-add-btn" class="quick-add-btn">追加</button>
+        </div>
+        <div id="inbox-list" class="task-list-zone"></div>
+      </div>
+
+      <!-- 区切り線（タブレット以上） -->
+      <div class="col-divider"></div>
+
+      <!-- 今日のブロック パネル -->
+      <div class="gtd-col" id="today-col">
+        <div class="col-header">
+          <button id="prev-day" class="arrow-sm">&#8249;</button>
+          <span id="current-date" class="col-title"></span>
+          <button id="next-day" class="arrow-sm">&#8250;</button>
+        </div>
+        <div id="time-blocks"></div>
+      </div>
+
+    </div>
   </div>
 
   <!-- カレンダービュー -->
@@ -46,10 +77,10 @@
     <div id="category-list"></div>
   </div>
 
-  <!-- タスク追加ボタン（FAB） -->
+  <!-- FAB -->
   <button id="add-task-btn" class="fab">＋</button>
 
-  <!-- タスクモーダル -->
+  <!-- タスク詳細モーダル -->
   <div id="task-modal" class="modal hidden">
     <div class="modal-content">
       <h2 id="modal-title">タスクを追加</h2>
@@ -64,13 +95,23 @@
         </select>
       </div>
       <div class="form-group">
-        <label>日付</label>
+        <label>日付（繰り返しの場合は開始日）</label>
         <input type="date" id="task-date">
       </div>
       <div class="form-group">
         <label>時間（任意）</label>
-        <input type="time" id="task-time" placeholder="例：10:30">
-        <p class="form-hint">入力すると自動でブロックに振り分けられます</p>
+        <div class="time-row">
+          <div class="time-input-wrap">
+            <span class="time-input-label">開始</span>
+            <input type="time" id="task-time-start">
+          </div>
+          <span class="time-separator">〜</span>
+          <div class="time-input-wrap">
+            <span class="time-input-label">終了</span>
+            <input type="time" id="task-time-end">
+          </div>
+        </div>
+        <p class="form-hint">開始時間に合わせてブロックに自動振り分け</p>
       </div>
       <div class="form-group">
         <label>繰り返し</label>
@@ -81,6 +122,7 @@
           <option value="monthly">毎月</option>
         </select>
       </div>
+      <div id="task-destination" class="destination-hint"></div>
       <div class="modal-actions">
         <button id="cancel-task" class="btn-secondary">キャンセル</button>
         <button id="save-task" class="btn-primary">保存</button>
@@ -107,6 +149,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
