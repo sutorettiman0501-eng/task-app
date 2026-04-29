@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>タスク管理</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <h1>タスク管理</h1>
+    <nav>
+      <button class="nav-btn active" data-view="daily">デイリー</button>
+      <button class="nav-btn" data-view="calendar">カレンダー</button>
+      <button class="nav-btn" data-view="category">カテゴリ</button>
+    </nav>
+  </header>
+
+  <!-- デイリービュー -->
+  <div id="daily-view" class="view active">
+    <div class="date-nav">
+      <button id="prev-day" class="arrow-btn">&#8249;</button>
+      <span id="current-date"></span>
+      <button id="next-day" class="arrow-btn">&#8250;</button>
+    </div>
+    <div id="time-blocks"></div>
+  </div>
+
+  <!-- カレンダービュー -->
+  <div id="calendar-view" class="view">
+    <div class="date-nav">
+      <button id="prev-month" class="arrow-btn">&#8249;</button>
+      <span id="current-month"></span>
+      <button id="next-month" class="arrow-btn">&#8250;</button>
+    </div>
+    <div id="calendar-grid" class="calendar-grid"></div>
+  </div>
+
+  <!-- カテゴリビュー -->
+  <div id="category-view" class="view">
+    <div class="view-header">
+      <button id="manage-cat-btn" class="text-btn">カテゴリを管理</button>
+    </div>
+    <div id="category-list"></div>
+  </div>
+
+  <!-- タスク追加ボタン（FAB） -->
+  <button id="add-task-btn" class="fab">＋</button>
+
+  <!-- タスクモーダル -->
+  <div id="task-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="modal-title">タスクを追加</h2>
+      <div class="form-group">
+        <label>タスク名</label>
+        <input type="text" id="task-title" placeholder="タスク名を入力">
+      </div>
+      <div class="form-group">
+        <label>カテゴリ</label>
+        <select id="task-category">
+          <option value="">カテゴリなし</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>日付</label>
+        <input type="date" id="task-date">
+      </div>
+      <div class="form-group">
+        <label>時間ブロック</label>
+        <select id="task-time-block">
+          <option value="9">09:00 〜 13:00</option>
+          <option value="13">13:00 〜 17:00</option>
+          <option value="17">17:00 〜 21:00</option>
+          <option value="21">21:00 〜</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>繰り返し</label>
+        <select id="task-repeat">
+          <option value="none">なし</option>
+          <option value="weekly">毎週</option>
+          <option value="monthly">毎月</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button id="cancel-task" class="btn-secondary">キャンセル</button>
+        <button id="save-task" class="btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- カテゴリ管理モーダル -->
+  <div id="category-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>カテゴリ管理</h2>
+      <div class="form-group">
+        <label>新しいカテゴリ</label>
+        <div class="input-row">
+          <input type="text" id="new-category-name" placeholder="カテゴリ名を入力">
+          <button id="save-category" class="btn-primary">追加</button>
+        </div>
+      </div>
+      <div id="category-modal-list"></div>
+      <div class="modal-actions">
+        <button id="close-category-modal" class="btn-secondary">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
