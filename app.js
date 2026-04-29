@@ -367,11 +367,13 @@ async function quickAddTask() {
   const { data, error } = await db.from('tasks')
     .insert({ title, in_inbox: true, done: false, repeat: 'none' })
     .select().single();
-  if (!error) {
-    tasks.push(data);
-    input.value = '';
-    renderInbox();
+  if (error) {
+    alert('追加に失敗しました。\n' + error.message);
+    return;
   }
+  tasks.push(data);
+  input.value = '';
+  renderInbox();
 }
 
 // ===== タスク保存（詳細モーダル） =====
@@ -414,13 +416,13 @@ async function saveTask() {
   if (editingTaskId) {
     const { data, error } = await db.from('tasks')
       .update(payload).eq('id', editingTaskId).select().single();
-    if (!error) {
-      const idx = tasks.findIndex(t => t.id === editingTaskId);
-      if (idx > -1) tasks[idx] = data;
-    }
+    if (error) { alert('更新に失敗しました。\n' + error.message); return; }
+    const idx = tasks.findIndex(t => t.id === editingTaskId);
+    if (idx > -1) tasks[idx] = data;
   } else {
     const { data, error } = await db.from('tasks').insert(payload).select().single();
-    if (!error) tasks.push(data);
+    if (error) { alert('追加に失敗しました。\n' + error.message); return; }
+    tasks.push(data);
   }
 
   closeTaskModal();
